@@ -1,11 +1,10 @@
-#makefile for client
+#makefile for server
 
 CC = gcc -Wall
 
+server : server.c
 
-client : client.c
-        
-	$(CC) client.c -o client
+	$(CC) server.c -o server
 
 clean:
-	rm -f client
+	rm -f server
