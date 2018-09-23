@@ -1,4 +1,4 @@
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 I have created two folders: one for client and one for server.
 
 steps to execute the server file
@@ -14,7 +14,7 @@ In the client folder
 > ./client <ip address of server> <port number>
 
 - Select a port number greater than 5000.
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Implemented the following commands
 1) put <filename> - transfers the file <filename> from client to server
@@ -44,7 +44,7 @@ on client side
 - The client gets the filename from user and sends it to the server.
 
 on server side
-- The server on receiving the filename, checks if it is present in the server. 
+- The server on receiving the filename, checks if it is present in the server folder. 
 - If present, it deletes and sends a message to client.
 
 
@@ -63,7 +63,7 @@ on server side
 It exists from the client and the server program.
 
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------
 Work done on client side
 
 - 	Robust programming technique is implemented on the input command option such that it handles any kind of input including "pressing enter" without crashing. 
@@ -71,7 +71,7 @@ Work done on client side
 -   Stop and wait algorithm is implement for sending the data to server such that it sends the packet till it is successfully received by the server and acknowledgement is received by client.
 -   The client has been limited to resend the frame for 100 iterations after which it neglects the current frame and sends the next frame.
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Work done on server side
 
@@ -81,4 +81,10 @@ Server responds to the requests send by the client.
 -   Stop and wait algorithm is implement for sending the data to client such that it sends the packet till it is successfully received by the server and acknowledgement is received by client.
 -   The client has been limited to resend the frame for 100 iterations after which it neglects the current frame and sends the next frame.
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+It has been tested with files of 100 MB and it gets transfered succesfully.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
