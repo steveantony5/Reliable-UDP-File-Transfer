@@ -1,4 +1,4 @@
-----------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 I have created two folders: one for client and one for server.
 
 steps to execute the server file
@@ -14,9 +14,10 @@ In the client folder
 > ./client <ip address of server> <port number>
 
 - Select a port number greater than 5000.
----------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 
 Implemented the following commands
+----------------------------------
 1) put <filename> - transfers the file <filename> from client to server
 
 on client side
@@ -63,17 +64,19 @@ on server side
 It exists from the client and the server program.
 
 
----------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 Work done on client side
+------------------------
 
 - 	Robust programming technique is implemented on the input command option such that it handles any kind of input including "pressing enter" without crashing. 
 -   Socket timeout is set such that it gives timeout if the delay for receiving input from server is more than 1 second.
 -   Stop and wait algorithm is implement for sending the data to server such that it sends the packet till it is successfully received by the server and acknowledgement is received by client.
 -   The client has been limited to resend the frame for 100 iterations after which it neglects the current frame and sends the next frame.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
 Work done on server side
+------------------------
 
 Server responds to the requests send by the client.
 
