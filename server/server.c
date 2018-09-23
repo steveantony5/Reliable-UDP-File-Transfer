@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 		exit(1);
 
 	}
+
 	//creating the socket
 	int server_socket,portno;
 	char buffer[BUFFERSIZE]; // for holding values
@@ -94,12 +95,12 @@ int main(int argc, char *argv[])
 				recvfrom(server_socket,&file_exists,sizeof(file_exists),0,(struct sockaddr *)&to_address,(socklen_t *)&length_address);
 				if(file_exists == 1)
 				{
-					// Terminating if the file doesn't exists on the client database
+					// Terminating if the file doesn't exists on the client folder
 					printf("\nServer: Requested file not present in server\n");
 					break;
 				}
 			
-				// setting socket timeout for
+				// setting socket timeout for 1 second
                                 tv.tv_sec = 1;
                                 tv.tv_usec = 0;
                                 setsockopt(server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
@@ -204,7 +205,7 @@ int main(int argc, char *argv[])
 
 				memset(filename_server,0,sizeof(filename_server));
 				
-				//setting socket timeout
+				//setting socket timeout for 1 second
 				tv.tv_sec=1;
 				tv.tv_usec=0;	
 				setsockopt(server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
@@ -338,7 +339,7 @@ int main(int argc, char *argv[])
 
 				break;
 
-			case 3: //deleting a file on server database
+			case 3: //deleting a file on server folder
 				printf("\nServer: Client option is to delete a file from server\n");
 
 				int flag, recv=0;
@@ -358,7 +359,7 @@ int main(int argc, char *argv[])
 				printf("\nServer: Completed client request\n");
 				break;
 
-			case 4: //listing the files in the server database
+			case 4: //listing the files in the server folder
 				printf("\nServer: Client option is to search the list of files in server");
 				FILE *fp_ls;// creating a file pointer
 

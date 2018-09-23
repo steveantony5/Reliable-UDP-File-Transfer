@@ -24,7 +24,7 @@
 #define BUFFERSIZE (2048) 
 
 
-//reating frame structure
+//defining frame structure
 typedef struct frame
 {
 	long int sq_no;
@@ -35,9 +35,9 @@ typedef struct frame
 
 int main(int argc, char *argv[])
 {
-        if(argc<3)// passing ip address of server and port number through command line
+        if(argc<3)// passing ip address of server and port number as command line argument
         {
-                fprintf(stderr,"\n Please provide hostname, port number\n");
+                printf("\n Please provide host ip address, port number\n");
                 exit(1);
 
         }
@@ -80,12 +80,12 @@ int main(int argc, char *argv[])
                 memset(filename,0,sizeof(filename));
 		 
 		Frame frame, recv_frame;
-		printf("\n 1. Put \"filename\"\n 2. Get \"filename\"\n 3. Delete \"filename\"\n 4. ls\n 5. exit\n");
+		printf("\n 1. put \"filename\"\n 2. get \"filename\"\n 3. delete \"filename\"\n 4. ls\n 5. exit\n");
 		printf("\nEnter the command : "); 
 		fgets(choice,40,stdin);
 		sscanf(choice,"%s%s",command,filename);// separating command and filename
 		
-		//converting command to switch integer inputs
+		//converting command to switch case integer inputs
 		if(strcmp(command,"put")==0)
 			choice_int = 1;
 		else if(strcmp(command,"get")==0)
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		else
 			choice_int =0; // for any invalid command
 
-		long int total_lost = 0;
+		long int total_lost = 0;// for counting the number of packets lost
 		sendto(client_socket,&choice_int,sizeof(choice_int),0,(struct sockaddr *)&server_address,length_address);                  
 		switch(choice_int)
 		{
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 				int indicate_server =0;// variable for indicating the server about file existance
 				long int file_size = 0;
 				
-				//checking whether file exists in the client database
+				//checking whether the file exists in client folder
 				if(fp == NULL)
 				{
 					printf("\nClient: File doesn't exits\n");
