@@ -12,13 +12,15 @@ steps to execute the client file
 In the client folder
 > make
 > ./client <ip address of server> <port number>
+
+- Select a port number greater than 5000.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Implemented the following commands
 1) put <filename> - transfers the file <filename> from client to server
 
 on client side
-- The client gets the filename from user and checks whether the file is present in client database. If it is not present, it gives indication to server and displays as "File not found"
+- The client gets the filename from user and checks whether the file is present in client folder. If it is not present, it gives indication to server and displays as "File not found"
 - If the file is found, it transfer the file data in the form of frames using stop and wait protocol.
 
 on server side
@@ -29,14 +31,14 @@ on server side
 2) get <filename> - transfers the file <filename> from server to client
 
 on server side
-- The server on receiving the filename from client,  checks whether the file is present in server database. If it is not present, it gives indication to client and displays as "File not found"
+- The server on receiving the filename from client,  checks whether the file is present in server folder. If it is not present, it gives indication to client and displays as "File not found"
 - If the file is found, it transfer the file data in the form of frames using stop and wait protocol.
 
 on client side
 - The client receives the filename and sends it to the server.
 - After receiving the file, it calculates the bytes received and displays to the user for comparing.
 
-3) delete <filename> - deletes the file <filename> from server database
+3) delete <filename> - deletes the file <filename> from server folder
 
 on client side
 - The client gets the filename from user and sends it to the server.
@@ -46,7 +48,7 @@ on server side
 - If present, it deletes and sends a message to client.
 
 
-4) ls - this option lists the files present on the server database
+4) ls - this option lists the files present on the server folder
 
 on client side
 - After receiving "ls" command, it requests the server to give the list of files present on the server folder.
