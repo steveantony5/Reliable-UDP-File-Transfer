@@ -102,7 +102,6 @@ int main(int argc, char *argv[])
 		else
 			choice_int =0; // for any invalid command
 
-		long int total_lost = 0;// for counting the number of packets lost
 		
 		// sending the user choice to server
 		sendto(client_socket,&choice_int,sizeof(choice_int),0,(struct sockaddr *)&server_address,length_address);                  
@@ -126,20 +125,30 @@ int main(int argc, char *argv[])
 					printf("\nClient: File doesn't exits\n");
 					indicate_server = 1;// sets 1 if file doesn't exists
 				}
+			
+
+				//setting socket timeout if more than 1 second
+				tv.tv_sec = 1;
+				tv.tv_usec = 0;
+				setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
+				
 				
 				//sending file existance status to server
-				status = sendto(client_socket,&indicate_server,sizeof(indicate_server),0,(struct sockaddr *)&server_address,length_address);
+				ack = 0 , status = 0;
+		                while(1)
+				{
+				        sendto(client_socket,&indicate_server,sizeof(indicate_server),0,(struct sockaddr *)&server_address,length_address);
+					status = recvfrom(client_socket,&ack,sizeof(ack),0,(struct sockaddr *)&server_address,(socklen_t *)&length_address);
+				                                                                                                                                                                               if((status > 0) && ack ==1)
+				                break;
+	                                                                                                                                                                                                       printf("\n Resending name of the file\n");
+	                                                                                                                                                                                               }
+				
 				
 
 				if(indicate_server==1)
 					break;// breaking the loop if file doesn't exists
 			
-				//setting socket timeout if more than 1 second
-				tv.tv_sec = 1;
-				tv.tv_usec = 0;
-				setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
-			
-					
 				
 				// sending the name of the file to server
 				ack = 0 , status = 0;
@@ -226,13 +235,11 @@ int main(int argc, char *argv[])
 						{
 							// breaking if ack is not received up to 100 retries
 							printf("Frame %ld time expired: exceeded 100 iterations\n", frame_id);
-							total_lost++;
 							break;
 						}
 					}
 				}
 			    	printf("\n file sent successfully\n");
-				printf("\n Total packets lost %ld\n",total_lost);	
 				fclose(fp);
 				
 				// resetting the socket timeout
@@ -245,6 +252,7 @@ int main(int argc, char *argv[])
 			case 2: //client receiving file from server
 				printf("\nClient: Option selected is get()\n"); 
 				int file_exists = 0;// variable to indicate whether the file exists in server database
+				long int total_lost = 0; // for counting the number of packets lost 
 
 				//setting socket timeout if more than 1 second
 				tv.tv_sec = 1;
@@ -258,20 +266,27 @@ int main(int argc, char *argv[])
                                 {
 	                                sendto(client_socket,filename,sizeof(filename),0,(struct sockaddr *)&server_address,length_address);
 	                                                                                                                                                                                                       status = recvfrom(client_socket,&ack,sizeof(ack),0,(struct sockaddr *)&server_address,(socklen_t *)&length_address);
-	                                                                                                                                                                                                       if((status > 0) && ack ==1)
-		                                break;
+	                                                                                                                                                                                                       if((status > 0) && ack == 1)																	      {
+						break;
+					}
 		                                                                                                                                                                                              printf("\n Resending name of the file\n");
 		                                                                                                                                                                                                                                                                                                                                                             }
 		
 				
-				//resetting socket timeout
-				tv.tv_usec = 0;
-				tv.tv_sec = 0;
-				setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
-				
-                		
 				//checking the file existance and terminating
-				recvfrom(client_socket,&file_exists,sizeof(file_exists),0,(struct sockaddr *)&server_address,(socklen_t *)&length_address);
+				ack = 0 , status = 0;
+				while(1)
+				{
+				       status = recvfrom(client_socket,&file_exists,sizeof(file_exists),0,(struct sockaddr *)&server_address,(socklen_t *)&length_address);
+				                                                                                                                                                                              if((status > 0))
+				       {		
+					       ack = 1;
+					       sendto(client_socket, &ack, sizeof(ack),0,(struct sockaddr *)&server_address, length_address);
+					       break;
+			 	       }
+																									      printf("\nRereceiving the file existance status\n");
+				}
+				
 
 				if(file_exists == 1)
                			{
@@ -284,10 +299,6 @@ int main(int argc, char *argv[])
 				//creating and opening the file in write mode
         		        fp2=fopen(filename,"wb");
      			
-				// setting socket timeout for 1 sec
-				tv.tv_usec = 0;
-				tv.tv_sec = 1;
-				setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
 
 				// receving the number of packets from server
 				memset(&packets,0,sizeof(packets));
