@@ -166,12 +166,13 @@ int main(int argc, char *argv[])
 				
 
 				long int received_bytes = 0;// for storing the received bytes
-				int counter = 1;// counter for terminting at 100th iteration
 
 				//receiving file data from client
 				for(long int frame_id = 1; frame_id <= packets; frame_id++)
 				{
 					memset((&recv_frame),0,sizeof(recv_frame));// setting the members of frame to zero
+
+					int counter = 1;// counter for terminting at 100th iteration
 
 					while(1)
 					{

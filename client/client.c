@@ -319,14 +319,13 @@ int main(int argc, char *argv[])
 				printf("\nPackets = %ld \n",packets);
 				
 				
-				long int counter = 1;// counter for terminating at 100th iteration of resending
 				long int received_bytes =0;// for stroing the number of bytes received
 				
 				//receving data from server
 				for(long int frame_id= 1;frame_id <= packets;frame_id++)
 				{
 					memset(&(recv_frame),0,sizeof(recv_frame));
-					
+					long int counter = 1;// counter for terminating at 100th iteration of resending	
 					while(1)
 					{
 						int recv_result = recvfrom(client_socket, &recv_frame, sizeof(recv_frame), 0,(struct sockaddr*)\
