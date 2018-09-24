@@ -42,14 +42,14 @@ int main(int argc, char *argv[])
 
         }
         //creating the socket for client 
-        int client_socket,portno;
-        char buffer[BUFFERSIZE];
+        int client_socket,portno;// declaring a variable for port number
+        char buffer[BUFFERSIZE];// used for ls command and delete command
 	int status=0, ack = 0;; // check the status of sendto and recvfrom
 
         struct sockaddr_in server_address ;
-        client_socket = socket(AF_INET,SOCK_DGRAM,0);
+        client_socket = socket(AF_INET,SOCK_DGRAM,0);// setting the client socket
 
-        if(client_socket < 0 ) 
+        if(client_socket < 0 ) // enters this loop if port number is not given as command line argument
         {
                 //printing error message when opening client socket
 		printf("\nError opening client socket\n");
@@ -63,29 +63,32 @@ int main(int argc, char *argv[])
 	server_address.sin_addr.s_addr = inet_addr(argv[1]);
 
 	int length_address;// for storing the length of server address
-	memset(&length_address,0,sizeof(length_address));
+	memset(&length_address,0,sizeof(length_address));// clearing the length_address variable
  	length_address	= sizeof(server_address);
 	
 	struct timeval tv;// for socket timeout
 	
 	while(1)
 	{	
-                char choice[40];
-                char command[20];
-                char filename[20];
+                char choice[40];// for getting the input command choice from the user
+                char command[20];// for storing the command part from the variable "choice"
+                char filename[20];// for storing the filename from the variable "choice"
                 long int packets=0;
-                int choice_int;
+                int choice_int;// used in the switch structure
+
+		// clearing the declared variables
                 memset(choice,0,sizeof(choice));
                 memset(command,0,sizeof(command));
                 memset(filename,0,sizeof(filename));
 		 
-		Frame frame, recv_frame;
+		Frame frame, recv_frame;// creating variables for the frame structure
 		printf("\n 1. put \"filename\"\n 2. get \"filename\"\n 3. delete \"filename\"\n 4. ls\n 5. exit\n");
 		printf("\nEnter the command : "); 
-		fgets(choice,40,stdin);
-		sscanf(choice,"%s%s",command,filename);// separating command and filename
+		fgets(choice,40,stdin);// gets the input from user
+		sscanf(choice,"%s%s",command,filename);// separating command and filename from the user input variable "choice"
 		
-		//converting command to switch case integer inputs
+		//converting user input command to switch case integer inputs
+		
 		if(strcmp(command,"put")==0)
 			choice_int = 1;
 		else if(strcmp(command,"get")==0)
@@ -100,6 +103,8 @@ int main(int argc, char *argv[])
 			choice_int =0; // for any invalid command
 
 		long int total_lost = 0;// for counting the number of packets lost
+		
+		// sending the user choice to server
 		sendto(client_socket,&choice_int,sizeof(choice_int),0,(struct sockaddr *)&server_address,length_address);                  
 		switch(choice_int)
 		{
@@ -109,6 +114,8 @@ int main(int argc, char *argv[])
 				
 				//creating file pointer
 				FILE *fp;	
+
+				//opening the file in read mode
 			    	fp=fopen(filename,"rb");
 				int indicate_server =0;// variable for indicating the server about file existance
 				long int file_size = 0;
@@ -121,7 +128,6 @@ int main(int argc, char *argv[])
 				}
 				
 				//sending file existance status to server
-				
 				status = sendto(client_socket,&indicate_server,sizeof(indicate_server),0,(struct sockaddr *)&server_address,length_address);
 				
 
@@ -274,6 +280,8 @@ int main(int argc, char *argv[])
                 		}
 				
 				FILE *fp2;// creating file pointer
+
+				//creating and opening the file in write mode
         		        fp2=fopen(filename,"wb");
      			
 				// setting socket timeout for 1 sec
@@ -301,7 +309,7 @@ int main(int argc, char *argv[])
 				
 				
 				long int counter = 1;// counter for terminating at 100th iteration of resending
-				long int received_bytes =0;
+				long int received_bytes =0;// for stroing the number of bytes received
 				
 				//receving data from server
 				for(long int frame_id= 1;frame_id <= packets;frame_id++)

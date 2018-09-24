@@ -43,14 +43,16 @@ int main(int argc, char *argv[])
 	int server_socket,portno;
 	char buffer[BUFFERSIZE]; // for holding values
 	int ack =0, status = 0; // check the status of sendto and recvfrom
+	
+	
 	struct sockaddr_in server_address, to_address;
-	server_socket = socket(AF_INET,SOCK_DGRAM,0);
+	server_socket = socket(AF_INET,SOCK_DGRAM,0);// setting the server socket
 	if(server_socket<0)
 	{
 		printf("\nServer: Error opening server socket\n");
 		exit(1);
 	}
-	bzero((char *)&server_address,sizeof(server_address));
+	bzero((char *)&server_address,sizeof(server_address));// clearing the server address
 	portno = atoi(argv[1]);// storing the port number in a variable
 
 	server_address.sin_family = AF_INET;
@@ -58,7 +60,7 @@ int main(int argc, char *argv[])
 	server_address.sin_port = htons(portno);
 
 	int length_address;// for storing the length of address
-	Frame recv_frame, frame;
+	Frame recv_frame, frame;// creating variables for the frame structure
 
 	struct timeval tv;// for setting socket timeout
 
@@ -70,14 +72,16 @@ int main(int argc, char *argv[])
 
 	printf("\nServer: Waiting for command from client\n");
 	
-	char filename_server[20];
+	char filename_server[20];// vaiable for holing the filename
 	while(1)
 	{
 		long int packets=0;
 
 		//getting the command choice from client
 		int choice;
-		memset(&choice,0,sizeof(choice));
+		memset(&choice,0,sizeof(choice));// clearing the choice
+
+		// receiving choice from client
 		recvfrom(server_socket,&choice,sizeof(choice),0,(struct sockaddr *)&to_address,(socklen_t *)&length_address);
 		
 		switch(choice)
@@ -108,7 +112,7 @@ int main(int argc, char *argv[])
 	
 				//getting the filename from client
 				memset(filename_server,0,sizeof(filename_server));
-				status = 0, ack = 0;
+				status = 0, ack = 0;// setting to zero
 				while(1)
                                 {
                                         status = recvfrom(server_socket,filename_server,sizeof(filename_server),0,(struct sockaddr *)\
@@ -124,12 +128,14 @@ int main(int argc, char *argv[])
 				
 
 				FILE *fp;// creating the file pointer
+
+				//ceating and opening the file in write mode
 				fp=fopen(filename_server,"wb");
 
 
 				// getting the number of packets from client
 				memset(&packets,0,sizeof(packets));
-				ack =0, status =0;	
+				ack =0, status =0;// setting to zero	
 				while(1)
 				{
 					status = recvfrom(server_socket,&packets,sizeof(packets),0,(struct sockaddr *)&to_address,(socklen_t *)&\
@@ -146,13 +152,13 @@ int main(int argc, char *argv[])
 				printf("\nServer: Packets =  %ld ",packets);
 				
 
-				long int received_bytes = 0;
+				long int received_bytes = 0;// for storing the received bytes
 				int counter = 1;// counter for terminting at 100th iteration
 
 				//receiving file data from client
 				for(long int frame_id = 1; frame_id <= packets; frame_id++)
 				{
-					memset((&recv_frame),0,sizeof(recv_frame));
+					memset((&recv_frame),0,sizeof(recv_frame));// setting the members of frame to zero
 
 					while(1)
 					{
@@ -203,6 +209,7 @@ int main(int argc, char *argv[])
 				
 				FILE *fp2;// creating file pointer
 
+				//setting the filename variable to zero
 				memset(filename_server,0,sizeof(filename_server));
 				
 				//setting socket timeout for 1 second
@@ -213,7 +220,7 @@ int main(int argc, char *argv[])
 				
 				//getting the filename from client
                                 memset(filename_server,0,sizeof(filename_server));
-                                status = 0, ack = 0;
+                                status = 0, ack = 0;// setting to zero
                                 while(1)
                                 {
                                         status = recvfrom(server_socket,filename_server,sizeof(filename_server),0,(struct sockaddr *)\
@@ -228,7 +235,7 @@ int main(int argc, char *argv[])
                                 }
 
 	
-			
+				// opening the file in read mode
 				fp2=fopen(filename_server,"rb");
 				int indicate_client = 0;// to indicate client if the file is not found
 
@@ -244,6 +251,7 @@ int main(int argc, char *argv[])
                                 tv.tv_usec = 0;
                                 setsockopt(server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
 
+				//sending the status of file existane to client
 				sendto(server_socket,&indicate_client,sizeof(indicate_client),0,(struct sockaddr *)&to_address,length_address);
 				if(indicate_client==1)
 				break;//terminate if the file doesn't exists
@@ -275,6 +283,7 @@ int main(int argc, char *argv[])
                                 setsockopt(server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(struct timeval));
 
 
+				//sending the number of packets to client
 				while(1)
 				{
 					sendto(server_socket,&packets,sizeof(packets),0,(struct sockaddr *)&to_address,length_address);
@@ -345,8 +354,8 @@ int main(int argc, char *argv[])
 				int flag, recv=0;
 
 
+				//receiving the filename from client
 				memset(filename_server,0, sizeof(filename_server));
-
 				if((recv =recvfrom(server_socket,filename_server,sizeof(filename_server),0,(struct sockaddr *)\
 					&to_address,(socklen_t *)&length_address)) == -1)
 			       	{
@@ -366,6 +375,7 @@ int main(int argc, char *argv[])
 				//sending the list command to system
 				system("ls >> temporary.log");
 
+				//opeing the log file created in read mode
 				fp_ls=fopen("temporary.log","rb");
 				
 				memset(buffer,0,sizeof(buffer));
@@ -374,6 +384,8 @@ int main(int argc, char *argv[])
 				fread(buffer,1,BUFFERSIZE,fp_ls);
 
 				fclose(fp_ls);
+
+				
 				recvfrom(server_socket,filename_server,sizeof(filename_server),0,(struct sockaddr *)&to_address,(socklen_t *)&length_address);
 				sendto(server_socket,buffer,sizeof(buffer),0,(struct sockaddr *)&to_address,length_address);
 				
