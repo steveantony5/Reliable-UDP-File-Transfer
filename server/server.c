@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
                                         status = recvfrom(server_socket,filename_server,sizeof(filename_server),0,(struct sockaddr *)\
 						&to_address,(socklen_t *)&length_address);
 
-                                        if((status > 0) && packets >= 0)
+                                        if(status > 0)
                                         {
                                                 ack =1;
                                                 sendto(server_socket, &ack, sizeof(ack), 0,(struct sockaddr*)&to_address, length_address);

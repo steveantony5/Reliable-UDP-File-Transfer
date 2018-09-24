@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 					status = recvfrom(client_socket,&ack,sizeof(ack),0,(struct sockaddr *)&server_address,(socklen_t *)&length_address);
 				                                                                                                                                                                               if((status > 0) && ack ==1)
 				                break;
-	                                                                                                                                                                                                       printf("\n Resending name of the file\n");
+	                                                                                                                                                                                                       printf("\n Resending file existance status\n");
 	                                                                                                                                                                                               }
 				
 				
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
 					status = recvfrom(client_socket,&packets,sizeof(packets),0,(struct sockaddr *)&server_address, (socklen_t *)\
 							&length_address);  
                 		
-					if((status > 0) && packets >=0)
+					if(status > 0)
 					{
 						ack = 1;
 						sendto(client_socket, &ack, sizeof(ack),0,(struct sockaddr *)&server_address, length_address);
